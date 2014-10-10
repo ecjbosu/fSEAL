@@ -1,0 +1,65 @@
+#'==============================================================================
+#' Name   : FSEAL R configuration
+#' Author : Joe W. Byers
+#' Date   : 09/07/2014
+#' Version: 1.0001
+#' Aim    : R profile.site file
+#' Mail   : <<<ecjbosu@aol.com>>>
+#'==============================================================================
+#' Notes:  A symbolic link placed in /pathtoRdirectory/etc to this file located 
+#'  a custom deployment enviroment is beneficial to facilitate pushed updates.
+
+# Things you might want to change
+
+# options(papersize="a4")
+# options(editor="notepad")
+# options(pager="internal")
+
+# set the default help type
+# options(help_type="text")
+  options(help_type="html")
+
+#options(java.parameters = "-Xmx2048m")
+
+# set a site library
+# .Library.site <- file.path(chartr("\\", "/", R.home()), "site-library")
+
+# load needed packages 
+library(R.utils)
+library(rJava)
+
+corePath 	= '/opt/finseal/Rcode';
+rootDBPath 	= '/Share/metamarts';
+workEnv 	= 'development';
+dbSubPath       = '';
+
+
+basePath = paste(corePath, '/Library', sep='');
+if (!file.exists(basePath)) {
+  print('Create Base Path');
+  dir.create(basePath);
+  }
+if (!file.exists(gsub('Library','scripts',basePath))) {
+  print('Create Script Path')
+  dir.create(gsub('Library','scripts',basePath));
+  }
+
+#  tpath = .libPaths();
+.libPaths(c(.libPaths(), basePath))
+#.libPaths(tpath)
+
+#set shared working directory
+setwd(paste(corePath, '/scripts', sep=''));
+          
+# set a CRAN mirror
+# local({r <- getOption("repos")
+#       r["CRAN"] <- "http://my.local.cran"
+#       options(repos=r)})
+
+       
+#load sources 
+sapply(list.files(paste(corePath, '/sources', sep=''), 
+  all.files = F, full.names = T, include.dirs=F),source, echo=F);
+
+options(java.parameters = "-Xmx4g" );  
+setJarClasses();
