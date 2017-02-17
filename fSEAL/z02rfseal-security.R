@@ -17,7 +17,7 @@ rsecurity <- setRefClass("rsecurity"
                      #' example
                      #' x <- rsecurity$new()  
                      #' x$setItems()
-                     #' str <- 'MET'
+                     #' str <- 'FSEAL'
                      #' rec <- x$getDB(str)
                      #' x$base64decode(rec$Password)
                      ###

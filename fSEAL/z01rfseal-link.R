@@ -1,5 +1,5 @@
 #' ==============================================================================
-#' Name   : cynosure link class
+#' Name   : FSEAL link class
 #' Author : Joe W. Byers
 #' Date   : 10/08/2014
 #' Version: 1.0001
@@ -16,7 +16,6 @@ link <- setRefClass("link"
                      #'   
                      #' Example:  
                      #'   lnk=new('link')
-                     #'   lnk$getDBmart('curvesDB','curveDefs')
                      ###
                      ,contains = NULL
                      ,methods = list(
@@ -45,7 +44,7 @@ link <- setRefClass("link"
                               out <- out[!is.na(out$CurveID)&!is.na(out$BASISParentID),];
                               #get mapping for ice
                               t1  <- link()$getDBmart('IceDB','ICEMAP');
-                              t1  <- t1[!is.na(t1$MET_HUB),];
+                              t1  <- t1[!is.na(t1$HUB),];
                               #get commodity definitions for base curve
                               t2 <- link()$getDBmart('curvesDB', 'commodityDefs')
                               t2 <- t2[!is.na(t2$BaseSeriesID),];
