@@ -28,7 +28,7 @@ ret<-NULL;
       stop('tableScrapeJob::mail : subject is required and must be character');
   if (missing(msgBody) | class(msgBody)!='character') 
       stop('tableScrapeJob::mail : msgBody is required and must be character');
-  if (missing(smtpserver)) smtpserver  = 'mail.martinmlp.com'; 
+  if (missing(smtpserver)) smtpserver  = 'mail.financialseal.com'; 
     # put in xml and load
   if (missing(caption)) caption = '';
   if (missing(dataTable) | class(dataTable)=='character')

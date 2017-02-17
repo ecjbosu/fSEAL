@@ -24,7 +24,7 @@ libor_scrape.mail <- function(from, to, subject, msgBody, caption, dataTable='',
       stop('libor_scrap::mail : subject is required and must be character');
   if (missing(msgBody) | class(msgBody)!='character') 
       stop('libor_scrap::mail : msgBody is required and must be character');
-  if (missing(smtpserver)) smtpserver  = 'mail.martinmlp.com'; 
+  if (missing(smtpserver)) smtpserver  = 'mail.financialseal.com'; 
     # put in xml and load
   if (missing(caption)) caption = '';
   if (missing(dataTable) | class(dataTable)=='character')

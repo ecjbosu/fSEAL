@@ -156,6 +156,89 @@ link <- setRefClass("link"
                           stop('fseal::link::archive : Archive failed'); 
                         }
                         )
-                      }
-                    )
+                      },
+                      tableArchiver = function(data, fileName, fileType=NULL) {
+              		      #' FileName includes full path with extension.  If fileType empty will check
+              		      #' extenion.  If extension missing, fileType will be appended.  If extension and
+              		      #' file type conflicted, file type will take precendence.
+              		      #' xlsm is not supported in XLConnect required by xlsx.  The apache POI 
+              		      #' components have not been implemented or Apache POI does not support it.
+              
+              		      library(xlsxjars);
+              		      library(xlsx);
+              		      if (.Platform$OS.type != 'windows') library(ROpenOffice)
+              
+              		      if (missing(data) | class(data)!='data.frame')
+              			    stop('link::tableArchiver : data is required and must be data.frame');
+              
+              		      if (missing(fileName) | class(fileName)!='character')
+              			    stop('link::tableArchiver : fileName is required and must be character');
+              
+              		      #move this to a meta data and load
+              		      validtypes = c('csv', 'odt', 'dat', 'xls', 'xlsx', 'xlsm');
+              
+                        #get extension from fileName
+              		      ext1 <- fsealHelpers()$getFileExt(fileName);
+                        if (!is.null(ext1)) fileName <- sub(paste('',ext1,sep="."),'',fileName);
+                        #if (is.null(ext1)) ext1 <- 'csv';
+              			    
+                        #check if fileName extension == fileType
+              			    #check if fileName had extension that conflicts with fileType
+                        if (is.null(fileType) & is.null(ext1)) {
+                          warning('link::tableArchiver : fileType and fileName extension missing, defaulting to csv');
+                          fileName <- paste(fileName,"csv",sep='.');
+                          ext <- "csv";
+                        }
+                        if (is.null(fileType) & !is.null(ext1)) {
+                          warning('link::tableArchiver : fileType missing using fileName extension');
+                          fileName <- paste(fileName,ext1,sep='.');
+                          ext <- ext1;
+                        } 
+              			    if (!is.null(fileType) & !is.null(ext1)) {
+              			      if (tolower(fileType) != tolower(ext1)) {
+                			      warning('link::tableArchiver : fileType differs from fileName extension.  File type takes precedence');
+                			      fileName <- paste(fileName,fileType,sep='.')
+                            ext <- fileType;
+                			    }
+                        }
+              			    if (!is.null(fileType) & is.null(ext1)) {
+            			        warning('link::tableArchiver : missing fileName extension, using File type.');
+            			        fileName <- paste(fileName,fileType,sep='.')
+            			        ext <- fileType;
+              			    }
+              			    
+              			    cat(ext, '\n')
+              			    #check if ext valid
+              			    if (!ext %in% validtypes) {
+              			      warning('link::tableArchiver : fileType is invalid, resetting to csv');
+              			      ext <- 'csv';
+              			    }
+              			    
+                        #write csv file
+              		      if (tolower(ext) %in% c('csv','dat'))
+                    			write.csv(data,fileName, row.names=F);
+                    
+              		      #write odt file
+              		      if (tolower(ext) %in% c('odt'))
+                  			  if (.Platform$OS.type != 'windows'){
+                  			    write.csv(data,fileName, row.names=F);
+                  			  } else {
+                  			    warning('links::tableArchiver : fileType is open document format, OS is windows, switching to Excel');
+                  			  }
+
+                        #write excel file
+              		      if (tolower(ext) %in% c('xls', 'xlsx', 'xlsm')) {
+                    			if (tolower(ext) == 'xlsm') {
+                    			  fileName = sub(ext, 'xlsx', fileName);
+                    			  warning('link::tableArchiver : xlsm fileType is not supported, switching to xlsx');  
+                    			}
+                    			write.xlsx2(data,fileName, row.names=F);
+              		      }
+                    
+                    		detach("package:xlsx");
+                    		detach("package:xlsxjars");
+                    			
+        		      } #end links::tableArchiver
+              )
+      		      
 )

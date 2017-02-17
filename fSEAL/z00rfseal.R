@@ -1,4 +1,4 @@
-r#' ==============================================================================
+#' ==============================================================================
 #' Name   : fseal class
 #' Author : Joe W. Byers
 #' Date   : 10/09/2014
@@ -6,7 +6,7 @@ r#' ============================================================================
 #' Aim    : fseal core class
 #' Mail   : <<<ecjbosu@aol.com>>>
 #' ==============================================================================
-#' GIST   The parent class of all classes
+#' FSEAL   The parent class of all classes
 
 fseal <- setRefClass("fseal"
 ###
@@ -74,6 +74,14 @@ fsealHelpers <- setRefClass("fsealHelpers"
                           stop('fseal::fsealHelpers::dateWindow : error in setting start and end date'); 
                         }
                         )
+                      },
+                      getFileExt = function(fileName) {
+                       # returns the file extension or NULL
+                       ext <- strsplit(fileName,'\\.');
+                       ext <-ext[[1]][length(ext[[1]])];
+                       if (ext == fileName) ext <- NULL;
+                       
+                       return(ext)
                       }
                     )
 )
