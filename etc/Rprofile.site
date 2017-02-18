@@ -1,5 +1,5 @@
 #'==============================================================================
-#' Name   : FSEAL R configuration
+#' Name   : cynosure R configuration
 #' Author : Joe W. Byers
 #' Date   : 09/07/2014
 #' Version: 1.0001
@@ -8,6 +8,7 @@
 #'==============================================================================
 #' Notes:  A symbolic link placed in /pathtoRdirectory/etc to this file located 
 #'  a custom deployment enviroment is beneficial to facilitate pushed updates.
+#'  Many ideas were take from the R help on Startup, ?Rprofile.site
 
 # Things you might want to change
 
@@ -16,50 +17,62 @@
 # options(pager="internal")
 
 # set the default help type
-# options(help_type="text")
   options(help_type="html")
 
-#options(java.parameters = "-Xmx2048m")
-
+  options(java.parameters = "-Xmx4g" );  
+  #options(stringsAsFactors=F);
+  
 # set a site library
 # .Library.site <- file.path(chartr("\\", "/", R.home()), "site-library")
 
 # load needed packages 
-library(R.utils)
-library(rJava)
+  library(R.utils)
+  library(rJava)
 
-corePath 	= '/opt/finseal/Rcode';
-rootDBPath 	= '/Share/metamarts';
-workEnv 	= 'development';
-dbSubPath       = '';
+######################################################################################################
+#Directory paths for flat databases, data, and other required input or output information
+# set corePath for R working directory and code references that are not R packages
+  corePath 	= '/opt/finseal/Rcode';
 
 
-basePath = paste(corePath, '/Library', sep='');
-if (!file.exists(basePath)) {
-  print('Create Base Path');
-  dir.create(basePath);
-  }
-if (!file.exists(gsub('Library','scripts',basePath))) {
-  print('Create Script Path')
-  dir.create(gsub('Library','scripts',basePath));
-  }
+  #the following will configure share or NAS drive directory references.
+  rootDBPath 	= '/Share/metamarts';
+  dbSubPath       = '';
 
-#  tpath = .libPaths();
-.libPaths(c(.libPaths(), basePath))
-#.libPaths(tpath)
+  #Environment Examples
+    #Development
+    workEnv 	= 'development';
+
+    #Production
+    workEnv 	= 'production';
+
+    #Local: This requires redifining the rootDBPath and potientially the dbSubPath as I have done in 
+    #this example.
+    #workEnv 	= 'local';
+    #rootDBPath 	= '';
+    dbSubPath       = 'dbmarts';
+
+######################################################################################################
+#make sure paths exits.  More locations, if needed could be added here or create a script that reads 
+#a configuration file for require directories.
+  basePath = paste(corePath, '/Library', sep='');
+  if (!file.exists(basePath)) {
+    print('Create Base Path');
+    dir.create(basePath);
+    }
+  if (!file.exists(gsub('Library','scripts',basePath))) {
+    print('Create Script Path')
+    dir.create(gsub('Library','scripts',basePath));
+    }
+
+  .libPaths(c(.libPaths(), basePath))
+######################################################################################################
 
 #set shared working directory
-setwd(paste(corePath, '/scripts', sep=''));
+  setwd(paste(corePath, '/scripts', sep=''));
           
-# set a CRAN mirror
-# local({r <- getOption("repos")
-#       r["CRAN"] <- "http://my.local.cran"
-#       options(repos=r)})
-
-       
 #load sources 
-sapply(list.files(paste(corePath, '/sources', sep=''), 
-  all.files = F, full.names = T, include.dirs=F),source, echo=F);
+  sapply(list.files(paste(corePath, '/sources', sep=''), 
+    all.files = F, full.names = T, include.dirs=F),source, echo=F);
 
-options(java.parameters = "-Xmx4g" );  
-setJarClasses();
+  setJarClasses();
